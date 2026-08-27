@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'firebase_options.dart';
+import 'domain/services/sprite_service.dart';
+import 'domain/services/audio_service.dart';
+import 'domain/services/performance_service.dart';
 import 'presentation/screens/splash_screen.dart';
 import 'presentation/screens/home_screen.dart';
 import 'presentation/screens/play_screen.dart';
@@ -21,6 +24,9 @@ void main() async {
 
   // Initialize Firestore with seed data
   await _initializeFirestore();
+
+  // Initialize Polish & QA services (Phase 6)
+  await _initializePolishServices();
 
   runApp(
     const ProviderScope(
@@ -45,6 +51,33 @@ Future<void> _initializeFirestore() async {
   } catch (e) {
     print('ℹ️ Firestore initialization note: $e');
     // Don't block app startup if seeding fails
+  }
+}
+
+Future<void> _initializePolishServices() async {
+  try {
+    print('🎨 Initializing Polish & QA services...');
+
+    // Initialize performance monitoring
+    PerformanceService.startMonitoring();
+    print('📊 Performance monitoring enabled');
+
+    // Initialize sprite service (preload critical assets)
+    await SpriteService.initialize();
+
+    // Initialize audio service
+    await AudioService.initialize();
+
+    // Preload common assets
+    await Future.wait([
+      SpriteService.preloadTier('stable'),
+      AudioService.preloadGameplaySounds(),
+    ]);
+
+    print('✅ All polish services initialized successfully');
+  } catch (e) {
+    print('⚠️ Polish services initialization warning: $e');
+    // Don't block app startup if polish services fail
   }
 }
 
