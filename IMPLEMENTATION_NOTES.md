@@ -41,13 +41,15 @@
    - `savePlayResultProvider`
    - `getDoorwayRankingProvider`
 
-## Phase 3: Flame Physics Engine (Next)
-- [ ] Flame game widget integration in PlayScreen
-- [ ] Physics simulation (flame_forge2d)
-- [ ] Parcel physics properties
-- [ ] Tap/drag input handling
-- [ ] Collision detection
-- [ ] Stability calculation
+## Phase 3: Flame Physics Engine ✅
+- [x] Flame game widget integration in PlayScreen (GameWidget)
+- [x] Physics simulation (flame_forge2d with Forge2D)
+- [x] Parcel physics properties (BodyDef, FixtureDef)
+- [x] Tap/drag input handling (TapDown, Drag events)
+- [x] Collision detection (basic implementation)
+- [x] Stability calculation (PhysicsService)
+- [x] ParcelService for game progression
+- [x] Game providers (Riverpod)
 
 ## Phase 4: Parcel Assets & Data
 - [ ] Parcel shape definitions (20 types)
