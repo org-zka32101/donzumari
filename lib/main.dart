@@ -6,6 +6,8 @@ import 'firebase_options.dart';
 import 'domain/services/sprite_service.dart';
 import 'domain/services/audio_service.dart';
 import 'domain/services/performance_service.dart';
+import 'domain/services/preferences_service.dart';
+import 'domain/providers/preferences_providers.dart';
 import 'presentation/screens/splash_screen.dart';
 import 'presentation/screens/home_screen.dart';
 import 'presentation/screens/play_screen.dart';
@@ -62,6 +64,10 @@ Future<void> _initializePolishServices() async {
     PerformanceService.startMonitoring();
     print('📊 Performance monitoring enabled');
 
+    // Initialize preferences service (settings persistence)
+    await PreferencesService.initialize();
+    print('💾 Preferences service initialized');
+
     // Initialize sprite service (preload critical assets)
     await SpriteService.initialize();
 
@@ -86,6 +92,8 @@ class DonzumariApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final darkModeEnabled = ref.watch(darkModeProvider);
+
     return MaterialApp(
       title: '宅配ドン詰まり',
       theme: ThemeData(
@@ -99,7 +107,7 @@ class DonzumariApp extends ConsumerWidget {
         ),
         useMaterial3: true,
       ),
-      themeMode: ThemeMode.system,
+      themeMode: darkModeEnabled ? ThemeMode.dark : ThemeMode.light,
       home: const SplashScreen(),
       routes: {
         '/home': (context) => const HomeScreen(),
