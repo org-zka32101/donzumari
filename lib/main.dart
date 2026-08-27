@@ -12,6 +12,8 @@ import 'domain/services/analytics_service.dart';
 import 'domain/services/achievement_service.dart';
 import 'domain/services/matchmaking_service.dart';
 import 'domain/services/offline_service.dart';
+import 'domain/services/tutorial_service.dart';
+import 'domain/services/notification_service.dart';
 import 'domain/providers/preferences_providers.dart';
 import 'presentation/screens/splash_screen.dart';
 import 'presentation/screens/home_screen.dart';
@@ -94,6 +96,14 @@ Future<void> _initializePolishServices() async {
     // Initialize offline service (data sync & caching)
     await OfflineService.initialize();
     print('🔌 Offline service initialized');
+
+    // Initialize tutorial service (onboarding)
+    await TutorialService.initialize();
+    print('🎓 Tutorial service initialized');
+
+    // Initialize notification service (push notifications)
+    await NotificationService.initialize();
+    print('🔔 Notification service initialized');
 
     // Initialize sprite service (preload critical assets)
     await SpriteService.initialize();
