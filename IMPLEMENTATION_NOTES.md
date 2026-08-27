@@ -75,6 +75,17 @@
 - [x] Loading states (PulseLoadingIndicator, LoadingOverlay, SkeletonLoader)
 - [x] Polish providers (Riverpod integration for all services)
 
+## Phase 7B: Game Integration ✅
+- [x] DonzumariGame updated with audio/particles/animation support
+- [x] Game event service (GameEventService) for coordinated audio+visual effects
+- [x] Parcel drop sound effects and particle emission
+- [x] Collision detection with audio feedback
+- [x] Tower collapse with dramatic particle effects
+- [x] Performance monitoring integrated into game loop
+- [x] Firestore repository with automatic retry logic (NetworkErrorHandler)
+- [x] Game stats tracking (height, parcel count, frame time)
+- [x] GameParticle class for particle lifecycle management
+
 ## Architecture Overview
 
 ### Folder Structure
@@ -194,31 +205,52 @@ Firebase / Firestore (backend)
 - sfxVolumeProvider, musicVolumeProvider, soundEnabledProvider, musicEnabledProvider
 - initializePolishProvider, preloadGameplaySpritesProvider, preloadGameplaySoundsProvider
 
+### Phase 7B - Game Integration Services Implemented
+
+**Updated Services:**
+
+1. **DonzumariGame** (lib/presentation/game/donzumari_game.dart)
+   - Audio integration: plays drop, collision, and collapse sounds
+   - Particle system: dust, collision, and impact particles on events
+   - Performance monitoring: frame-time tracking and FPS calculation
+   - Game statistics: height, parcel count, elapsed time tracking
+   - GameParticle lifecycle management with physics simulation
+
+2. **GameEventService** (lib/domain/services/game_event_service.dart)
+   - Centralized game event management
+   - Sound + particle effect combinations for each event type
+   - 7 event types: parcel_drop, parcel_land, collision, collapse, perfect, score, rare_item
+   - Event callback system for UI layer integration
+   - Performance tracking for each event
+
+3. **FirestoreRepository** (lib/data/repositories/firestore_repository.dart)
+   - Automatic retry logic on ALL Firestore operations
+   - Exponential backoff: 100ms, 200ms, 400ms, 800ms
+   - Transient error detection (timeout, connection, server)
+   - User-friendly error messages for permanent errors
+   - Retryable operations: getDoorway, createDoorway, updateStack, saveResult, getRanking
+
 ## Next Steps
 
-1. **Asset Creation**
+1. **Asset Creation** (Phase 7A - Design Work)
    - Design and create sprite PNG files for 20 parcel types
    - Create audio files for SFX and music tracks
-   - Organize assets in proper directories:
+   - Organize assets:
      * assets/sprites/parcels/{stable,moderate,unstable,rare}/
      * assets/sounds/{effects,music,ui}/
 
-2. **Integration into Game**
-   - Integrate SpriteService into Flame GameWidget for parcel rendering
-   - Connect AudioService to game events (drop, collision, collapse)
-   - Wire AnimationService and ParticleService to visual effects
-   - Implement NetworkErrorHandler in Riverpod providers
-
-3. **Settings Screen Polish**
+2. **Settings Screen Polish** (Phase 7C)
    - Implement volume sliders connected to AudioService
    - Add sound enable/disable toggles
    - Persist audio preferences to SharedPreferences
+   - Graphics quality settings UI
 
-4. **Testing**
-   - Audio/sprite loading unit tests
-   - Error handler parsing tests
-   - Performance monitoring integration tests
-   - Network error UI component tests
+3. **Testing Suite** (Phase 7D)
+   - Game event service tests
+   - Firestore repository retry logic tests
+   - Performance monitoring tests
+   - Network error handler tests
+   - UI component tests (error dialog, loading states)
 
 ## Notes
 
