@@ -10,6 +10,7 @@ import 'domain/services/preferences_service.dart';
 import 'domain/services/cosmetic_service.dart';
 import 'domain/services/analytics_service.dart';
 import 'domain/services/achievement_service.dart';
+import 'domain/services/matchmaking_service.dart';
 import 'domain/providers/preferences_providers.dart';
 import 'presentation/screens/splash_screen.dart';
 import 'presentation/screens/home_screen.dart';
@@ -20,6 +21,7 @@ import 'presentation/screens/ranking_screen.dart';
 import 'presentation/screens/shop_screen.dart';
 import 'presentation/screens/settings_screen.dart';
 import 'presentation/screens/achievements_screen.dart';
+import 'presentation/screens/leaderboard_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -84,6 +86,10 @@ Future<void> _initializePolishServices() async {
     await AchievementService.initialize();
     print('🏆 Achievement service initialized');
 
+    // Initialize matchmaking service (ranked multiplayer)
+    await MatchmakingService.initialize();
+    print('🎯 Matchmaking service initialized');
+
     // Initialize sprite service (preload critical assets)
     await SpriteService.initialize();
 
@@ -134,6 +140,7 @@ class DonzumariApp extends ConsumerWidget {
         '/shop': (context) => const ShopScreen(),
         '/settings': (context) => const SettingsScreen(),
         '/achievements': (context) => const AchievementsScreen(),
+        '/leaderboard': (context) => const LeaderboardScreen(),
       },
     );
   }
