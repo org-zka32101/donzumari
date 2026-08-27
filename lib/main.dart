@@ -8,6 +8,7 @@ import 'domain/services/audio_service.dart';
 import 'domain/services/performance_service.dart';
 import 'domain/services/preferences_service.dart';
 import 'domain/services/cosmetic_service.dart';
+import 'domain/services/analytics_service.dart';
 import 'domain/providers/preferences_providers.dart';
 import 'presentation/screens/splash_screen.dart';
 import 'presentation/screens/home_screen.dart';
@@ -72,6 +73,10 @@ Future<void> _initializePolishServices() async {
     // Initialize cosmetic service (monetization)
     await CosmeticService.initialize();
     print('🎁 Cosmetic service initialized');
+
+    // Initialize analytics service (monitoring & insights)
+    await AnalyticsService.initialize();
+    print('📈 Analytics service initialized');
 
     // Initialize sprite service (preload critical assets)
     await SpriteService.initialize();

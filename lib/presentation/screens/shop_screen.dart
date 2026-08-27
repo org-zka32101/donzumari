@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/providers/monetization_providers.dart';
+import '../../domain/providers/analytics_providers.dart';
+import '../../domain/services/analytics_service.dart';
 import '../../data/models/cosmetic_model.dart';
 
 class ShopScreen extends ConsumerWidget {
@@ -354,8 +356,16 @@ void _handlePurchase(
             child: const Text('キャンセル'),
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               ref.read(purchaseCosmeticProvider(cosmetic.cosmeticId));
+
+              // Log purchase to analytics
+              await AnalyticsService.logPurchase(
+                cosmetic.cosmeticId,
+                cosmetic.price,
+                cosmetic.currency,
+              );
+
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('購入しました！')),
