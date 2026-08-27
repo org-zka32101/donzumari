@@ -2,6 +2,7 @@ import 'audio_service.dart';
 import 'particle_service.dart';
 import 'animation_service.dart';
 import 'performance_service.dart';
+import 'analytics_service.dart';
 
 /// Service to coordinate game events across audio, particles, and animations
 class GameEventService {
@@ -59,6 +60,8 @@ class GameEventService {
       return;
     }
 
+    if (!eventsEnabled) return;
+
     // Performance tracking
     await PerformanceService.trackAsync(
       'event:$eventName',
@@ -68,6 +71,16 @@ class GameEventService {
 
         // Callback to UI/game layer for particles
         onGameEvent?.call(eventName);
+
+        // Log analytics event
+        try {
+          await AnalyticsService.logEvent(
+            name: eventName,
+            parameters: data ?? {},
+          );
+        } catch (e) {
+          print('⚠️ Failed to log analytics for event $eventName: $e');
+        }
 
         print('✨ Event triggered: $eventName');
       },

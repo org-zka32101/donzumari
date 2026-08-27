@@ -7,6 +7,13 @@ import 'domain/services/sprite_service.dart';
 import 'domain/services/audio_service.dart';
 import 'domain/services/performance_service.dart';
 import 'domain/services/preferences_service.dart';
+import 'domain/services/cosmetic_service.dart';
+import 'domain/services/analytics_service.dart';
+import 'domain/services/achievement_service.dart';
+import 'domain/services/matchmaking_service.dart';
+import 'domain/services/offline_service.dart';
+import 'domain/services/tutorial_service.dart';
+import 'domain/services/notification_service.dart';
 import 'domain/providers/preferences_providers.dart';
 import 'presentation/screens/splash_screen.dart';
 import 'presentation/screens/home_screen.dart';
@@ -16,6 +23,8 @@ import 'presentation/screens/visit_selection_screen.dart';
 import 'presentation/screens/ranking_screen.dart';
 import 'presentation/screens/shop_screen.dart';
 import 'presentation/screens/settings_screen.dart';
+import 'presentation/screens/achievements_screen.dart';
+import 'presentation/screens/leaderboard_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -68,6 +77,34 @@ Future<void> _initializePolishServices() async {
     await PreferencesService.initialize();
     print('💾 Preferences service initialized');
 
+    // Initialize cosmetic service (monetization)
+    await CosmeticService.initialize();
+    print('🎁 Cosmetic service initialized');
+
+    // Initialize analytics service (monitoring & insights)
+    await AnalyticsService.initialize();
+    print('📈 Analytics service initialized');
+
+    // Initialize achievement service (progression & rewards)
+    await AchievementService.initialize();
+    print('🏆 Achievement service initialized');
+
+    // Initialize matchmaking service (ranked multiplayer)
+    await MatchmakingService.initialize();
+    print('🎯 Matchmaking service initialized');
+
+    // Initialize offline service (data sync & caching)
+    await OfflineService.initialize();
+    print('🔌 Offline service initialized');
+
+    // Initialize tutorial service (onboarding)
+    await TutorialService.initialize();
+    print('🎓 Tutorial service initialized');
+
+    // Initialize notification service (push notifications)
+    await NotificationService.initialize();
+    print('🔔 Notification service initialized');
+
     // Initialize sprite service (preload critical assets)
     await SpriteService.initialize();
 
@@ -117,6 +154,8 @@ class DonzumariApp extends ConsumerWidget {
         '/ranking': (context) => const RankingScreen(),
         '/shop': (context) => const ShopScreen(),
         '/settings': (context) => const SettingsScreen(),
+        '/achievements': (context) => const AchievementsScreen(),
+        '/leaderboard': (context) => const LeaderboardScreen(),
       },
     );
   }
