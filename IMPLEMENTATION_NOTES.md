@@ -55,14 +55,25 @@
 - [x] Parcel shape definitions (20 types)
 - [x] Stability tier configuration
 - [x] Firestore seeding service
-- [ ] Sprite assets (visual design)
-- [ ] Color variations (3 per shape)
+- [x] Sprite definitions (visual design assets)
+- [x] Color variations (3 per shape)
 
-## Phase 5: Matching Algorithm
-- [ ] Implement doorway matching logic
-- [ ] Score-based ranking
-- [ ] Cold start handling (NPC doorways)
-- [ ] Visit selection UI
+## Phase 5: Matching Algorithm ✅
+- [x] Implement doorway matching logic (composite scoring)
+- [x] Score-based ranking (skill 40% + activity 35% + novelty 25%)
+- [x] Cold start handling (NPC doorways fallback)
+- [x] Visit selection UI (dynamic candidate display)
+
+## Phase 6: Polish & QA ✅
+- [x] Sprite asset management (SpriteService)
+- [x] Audio/sound effects (AudioService with Flame Audio)
+- [x] Animation framework (AnimationService with easing curves)
+- [x] Particle effects system (ParticleService)
+- [x] Network error handling (NetworkErrorHandler with retry logic)
+- [x] Performance monitoring (PerformanceService with FPS tracking)
+- [x] Error UI components (ErrorDialog, ErrorSnackBar, NetworkStatusIndicator)
+- [x] Loading states (PulseLoadingIndicator, LoadingOverlay, SkeletonLoader)
+- [x] Polish providers (Riverpod integration for all services)
 
 ## Architecture Overview
 
@@ -132,27 +143,82 @@ Firebase / Firestore (backend)
 - `doorwayId` (document ID)
 - `entries` (array of {uid, height, rank})
 
+### Phase 6 - Polish & QA Services Implemented
+
+**Core Services:**
+
+1. **SpriteService** (lib/domain/services/sprite_service.dart)
+   - Preload and cache sprite assets
+   - Color variation management (3 variations per parcel)
+   - Asset path resolution and loading
+   - Memory-efficient caching with clearCache()
+
+2. **AudioService** (lib/domain/services/audio_service.dart)
+   - SFX and music playback via Flame Audio
+   - Volume controls (0.0-1.0 range)
+   - Sound sequences and preloading
+   - Audio cache management
+
+3. **AnimationService** (lib/domain/services/animation_service.dart)
+   - Easing curve implementations (quad, back, linear)
+   - Animation timing calculations
+   - Particle motion physics (trajectory, bounce)
+   - Tower sway and collapse animations
+
+4. **ParticleService** (lib/domain/services/particle_service.dart)
+   - 6 particle types: dust, spark, score, collision, rare_loot, impact
+   - Configurable particle emissions and physics
+   - Alpha/scale interpolation
+   - Rotation and shimmer effects
+
+5. **NetworkErrorHandler** (lib/domain/services/network_error_handler.dart)
+   - Firebase error parsing and translation to user-friendly Japanese messages
+   - Automatic retry logic with exponential backoff
+   - Retryable error detection
+   - Error classification (timeout, connection, server, permission)
+
+6. **PerformanceService** (lib/domain/services/performance_service.dart)
+   - Frame time recording and analysis
+   - FPS calculation and monitoring
+   - Performance reports with metrics
+   - Memory optimization suggestions
+
+**UI Components (lib/presentation/widgets/):**
+
+- **error_dialog.dart**: ErrorDialog, ErrorSnackBar, NetworkStatusIndicator, RetryButton
+- **loading_state.dart**: PulseLoadingIndicator, LoadingOverlay, SkeletonLoader, EmptyStateWidget
+
+**Providers (lib/domain/providers/polish_providers.dart):**
+- spriteServiceProvider, audioServiceProvider, animationServiceProvider, particleServiceProvider
+- getSpriteProvider, getAnimationEaseProvider, getParticleConfigProvider
+- sfxVolumeProvider, musicVolumeProvider, soundEnabledProvider, musicEnabledProvider
+- initializePolishProvider, preloadGameplaySpritesProvider, preloadGameplaySoundsProvider
+
 ## Next Steps
 
-1. **Code Generation**
-   ```bash
-   flutter pub run build_runner build
-   ```
+1. **Asset Creation**
+   - Design and create sprite PNG files for 20 parcel types
+   - Create audio files for SFX and music tracks
+   - Organize assets in proper directories:
+     * assets/sprites/parcels/{stable,moderate,unstable,rare}/
+     * assets/sounds/{effects,music,ui}/
 
-2. **Flame Integration**
-   - Replace PlayScreen's placeholder with Flame GameWidget
-   - Implement physics simulation
-   - Handle tap/drag input
+2. **Integration into Game**
+   - Integrate SpriteService into Flame GameWidget for parcel rendering
+   - Connect AudioService to game events (drop, collision, collapse)
+   - Wire AnimationService and ParticleService to visual effects
+   - Implement NetworkErrorHandler in Riverpod providers
 
-3. **Parcel Asset Creation**
-   - Design 20 parcel types
-   - Define shape data (vertices, center of mass)
-   - Create sprite assets
+3. **Settings Screen Polish**
+   - Implement volume sliders connected to AudioService
+   - Add sound enable/disable toggles
+   - Persist audio preferences to SharedPreferences
 
 4. **Testing**
-   - Widget tests for screens
-   - Integration tests for critical flows
-   - Physics simulation unit tests
+   - Audio/sprite loading unit tests
+   - Error handler parsing tests
+   - Performance monitoring integration tests
+   - Network error UI component tests
 
 ## Notes
 
