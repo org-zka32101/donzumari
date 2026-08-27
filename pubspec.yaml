@@ -1,0 +1,69 @@
+name: donzumari
+description: "宅配ドン詰まり — バランス積みゴースト非同期対戦ゲーム"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Core & State Management
+  riverpod: ^2.4.0
+  flutter_riverpod: ^2.4.0
+  riverpod_generator: ^2.3.0
+
+  # Physics Engine & Game
+  flame: ^1.11.0
+  flame_forge2d: ^0.14.0
+
+  # Firebase
+  firebase_core: ^2.24.0
+  cloud_firestore: ^4.14.0
+  firebase_auth: ^4.14.0
+  firebase_analytics: ^10.7.0
+  firebase_crashlytics: ^3.4.0
+  firebase_messaging: ^14.7.0
+  firebase_remote_config: ^4.3.0
+
+  # Monetization & Animations
+  purchases_flutter: ^7.3.0  # RevenueCat
+  lottie: ^2.4.0
+
+  # petit works base libraries
+  # petit_core: ^1.0.0  # TODO: Add when available
+  # petit_ui: ^1.0.0    # TODO: Add when available
+
+  # Utilities
+  uuid: ^4.1.0
+  intl: ^0.19.0
+  freezed_annotation: ^2.4.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # Linting & Code Generation
+  flutter_lints: ^2.0.0
+  build_runner: ^2.4.0
+  riverpod_generator: ^2.3.0
+  freezed: ^2.4.0
+  json_serializable: ^6.7.0
+
+flutter:
+  uses-material-design: true
+
+  # Assets (to be populated during development)
+  # assets:
+  #   - assets/parcels/
+  #   - assets/audio/
+  #   - assets/animations/
+
+  # Fonts
+  # fonts:
+  #   - family: YourFont
+  #     fonts:
+  #       - asset: assets/fonts/YourFont-Regular.ttf
