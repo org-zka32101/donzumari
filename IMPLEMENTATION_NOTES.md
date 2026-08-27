@@ -58,11 +58,11 @@
 - [ ] Sprite assets (visual design)
 - [ ] Color variations (3 per shape)
 
-## Phase 5: Matching Algorithm
-- [ ] Implement doorway matching logic
-- [ ] Score-based ranking
-- [ ] Cold start handling (NPC doorways)
-- [ ] Visit selection UI
+## Phase 5: Matching Algorithm ✅
+- [x] Implement doorway matching logic (composite scoring)
+- [x] Score-based ranking (skill 40% + activity 35% + novelty 25%)
+- [x] Cold start handling (NPC doorways fallback)
+- [x] Visit selection UI (dynamic candidate display)
 
 ## Architecture Overview
 
