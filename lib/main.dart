@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'firebase_options.dart';
 import 'presentation/screens/splash_screen.dart';
 import 'presentation/screens/home_screen.dart';
@@ -18,11 +19,33 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // Initialize Firestore with seed data
+  await _initializeFirestore();
+
   runApp(
     const ProviderScope(
       child: DonzumariApp(),
     ),
   );
+}
+
+Future<void> _initializeFirestore() async {
+  try {
+    final firestore = FirebaseFirestore.instance;
+
+    // Only seed on first app launch (check if parcels exist)
+    final parcelsRef = firestore.collection('parcelPresets');
+    final snapshot = await parcelsRef.limit(1).get();
+
+    if (snapshot.docs.isEmpty) {
+      print('🌱 First launch detected. Seeding initial data...');
+      // TODO: Implement seeding here
+      // For now, parcels should be created via Firebase Console or admin SDK
+    }
+  } catch (e) {
+    print('ℹ️ Firestore initialization note: $e');
+    // Don't block app startup if seeding fails
+  }
 }
 
 class DonzumariApp extends ConsumerWidget {
