@@ -7,6 +7,7 @@ import 'domain/services/sprite_service.dart';
 import 'domain/services/audio_service.dart';
 import 'domain/services/performance_service.dart';
 import 'domain/services/preferences_service.dart';
+import 'domain/services/cosmetic_service.dart';
 import 'domain/providers/preferences_providers.dart';
 import 'presentation/screens/splash_screen.dart';
 import 'presentation/screens/home_screen.dart';
@@ -67,6 +68,10 @@ Future<void> _initializePolishServices() async {
     // Initialize preferences service (settings persistence)
     await PreferencesService.initialize();
     print('💾 Preferences service initialized');
+
+    // Initialize cosmetic service (monetization)
+    await CosmeticService.initialize();
+    print('🎁 Cosmetic service initialized');
 
     // Initialize sprite service (preload critical assets)
     await SpriteService.initialize();
