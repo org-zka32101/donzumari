@@ -51,11 +51,12 @@
 - [x] ParcelService for game progression
 - [x] Game providers (Riverpod)
 
-## Phase 4: Parcel Assets & Data
-- [ ] Parcel shape definitions (20 types)
-- [ ] Stability tier configuration
-- [ ] Sprite assets
-- [ ] Color variations
+## Phase 4: Parcel Assets & Data ✅
+- [x] Parcel shape definitions (20 types)
+- [x] Stability tier configuration
+- [x] Firestore seeding service
+- [ ] Sprite assets (visual design)
+- [ ] Color variations (3 per shape)
 
 ## Phase 5: Matching Algorithm
 - [ ] Implement doorway matching logic
