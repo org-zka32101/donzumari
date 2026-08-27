@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../core/constants/app_constants.dart';
+import '../../domain/services/network_error_handler.dart';
 import '../models/doorway_model.dart';
 import '../models/play_result_model.dart';
 import '../models/ranking_model.dart';
@@ -14,106 +15,106 @@ class FirestoreRepository {
 
   // Doorway operations
 
-  /// Get doorway by ID
+  /// Get doorway by ID (with automatic retry on transient errors)
   Future<DoorwayModel?> getDoorway(String doorwayId) async {
-    try {
-      final doc = await _firestore
-          .collection(AppConstants.doorwaysCollection)
-          .doc(doorwayId)
-          .get();
+    return _retryableOperation<DoorwayModel?>(
+      'getDoorway:$doorwayId',
+      () async {
+        final doc = await _firestore
+            .collection(AppConstants.doorwaysCollection)
+            .doc(doorwayId)
+            .get();
 
-      if (doc.exists) {
-        return DoorwayModel.fromJson(doc.data() as Map<String, dynamic>);
-      }
-      return null;
-    } catch (e) {
-      print('Error getting doorway: $e');
-      rethrow;
-    }
+        if (doc.exists) {
+          return DoorwayModel.fromJson(doc.data() as Map<String, dynamic>);
+        }
+        return null;
+      },
+    );
   }
 
-  /// Create new doorway
+  /// Create new doorway (with automatic retry)
   Future<DoorwayModel> createDoorway(String ownerUid) async {
-    try {
-      final doorwayId = const Uuid().v4();
-      final now = DateTime.now();
+    return _retryableOperation<DoorwayModel>(
+      'createDoorway:$ownerUid',
+      () async {
+        final doorwayId = const Uuid().v4();
+        final now = DateTime.now();
 
-      final doorway = DoorwayModel(
-        doorwayId: doorwayId,
-        ownerUid: ownerUid,
-        currentStack: [],
-        topScore: 0,
-        lastVisitedBy: null,
-        lastActivityAt: now,
-      );
+        final doorway = DoorwayModel(
+          doorwayId: doorwayId,
+          ownerUid: ownerUid,
+          currentStack: [],
+          topScore: 0,
+          lastVisitedBy: null,
+          lastActivityAt: now,
+        );
 
-      await _firestore
-          .collection(AppConstants.doorwaysCollection)
-          .doc(doorwayId)
-          .set(doorway);
+        await _firestore
+            .collection(AppConstants.doorwaysCollection)
+            .doc(doorwayId)
+            .set(doorway);
 
-      return doorway;
-    } catch (e) {
-      print('Error creating doorway: $e');
-      rethrow;
-    }
+        return doorway;
+      },
+    );
   }
 
-  /// Update doorway's current stack and last activity
+  /// Update doorway's current stack and last activity (with automatic retry)
   Future<void> updateDoorwayStack(
     String doorwayId,
     List<ParcelPlacement> stack,
     String? lastVisitedBy,
   ) async {
-    try {
-      await _firestore
-          .collection(AppConstants.doorwaysCollection)
-          .doc(doorwayId)
-          .update({
-        'currentStack': stack.map((p) => p).toList(),
-        'lastVisitedBy': lastVisitedBy,
-        AppConstants.lastActivityAtField: DateTime.now(),
-      });
-    } catch (e) {
-      print('Error updating doorway stack: $e');
-      rethrow;
-    }
+    return _retryableOperation<void>(
+      'updateDoorwayStack:$doorwayId',
+      () async {
+        await _firestore
+            .collection(AppConstants.doorwaysCollection)
+            .doc(doorwayId)
+            .update({
+          'currentStack': stack.map((p) => p).toList(),
+          'lastVisitedBy': lastVisitedBy,
+          AppConstants.lastActivityAtField: DateTime.now(),
+        });
+      },
+    );
   }
 
-  /// Update doorway's top score
+  /// Update doorway's top score (with automatic retry)
   Future<void> updateDoorwayTopScore(String doorwayId, double score) async {
-    try {
-      await _firestore
-          .collection(AppConstants.doorwaysCollection)
-          .doc(doorwayId)
-          .update({'topScore': score});
-    } catch (e) {
-      print('Error updating doorway top score: $e');
-      rethrow;
-    }
+    return _retryableOperation<void>(
+      'updateDoorwayTopScore:$doorwayId',
+      () async {
+        await _firestore
+            .collection(AppConstants.doorwaysCollection)
+            .doc(doorwayId)
+            .update({'topScore': score});
+      },
+    );
   }
 
-  /// Get recent doorways for visit selection
+  /// Get recent doorways for visit selection (with automatic retry)
   Future<List<DoorwayModel>> getRecentDoorways(int limit) async {
-    try {
-      final query = await _firestore
-          .collection(AppConstants.doorwaysCollection)
-          .orderBy(AppConstants.lastActivityAtField, descending: true)
-          .limit(limit)
-          .get();
+    return _retryableOperation<List<DoorwayModel>>(
+      'getRecentDoorways:$limit',
+      () async {
+        final query = await _firestore
+            .collection(AppConstants.doorwaysCollection)
+            .orderBy(AppConstants.lastActivityAtField, descending: true)
+            .limit(limit)
+            .get();
 
-      return query.docs
-          .map((doc) => DoorwayModel.fromJson(doc.data()))
-          .toList();
-    } catch (e) {
-      print('Error getting recent doorways: $e');
-      rethrow;
-    }
+        return query.docs
+            .map((doc) => DoorwayModel.fromJson(doc.data()))
+            .toList();
+      },
+    );
   }
 
   // Play Result operations
 
-  /// Save play result
+  /// Save play result (with automatic retry)
   Future<PlayResultModel> savePlayResult(
     String uid,
     String doorwayId,
@@ -121,88 +122,88 @@ class FirestoreRepository {
     bool collapsed,
     String? gifRef,
   ) async {
-    try {
-      final resultId = const Uuid().v4();
-      final now = DateTime.now();
+    return _retryableOperation<PlayResultModel>(
+      'savePlayResult:$doorwayId',
+      () async {
+        final resultId = const Uuid().v4();
+        final now = DateTime.now();
 
-      final result = PlayResultModel(
-        resultId: resultId,
-        uid: uid,
-        doorwayId: doorwayId,
-        height: height,
-        collapsed: collapsed,
-        gifRef: gifRef,
-        playedAt: now,
-      );
+        final result = PlayResultModel(
+          resultId: resultId,
+          uid: uid,
+          doorwayId: doorwayId,
+          height: height,
+          collapsed: collapsed,
+          gifRef: gifRef,
+          playedAt: now,
+        );
 
-      await _firestore
-          .collection(AppConstants.playResultsCollection)
-          .doc(resultId)
-          .set(result);
+        await _firestore
+            .collection(AppConstants.playResultsCollection)
+            .doc(resultId)
+            .set(result);
 
-      return result;
-    } catch (e) {
-      print('Error saving play result: $e');
-      rethrow;
-    }
+        return result;
+      },
+    );
   }
 
-  /// Get play results for a doorway
+  /// Get play results for a doorway (with automatic retry)
   Future<List<PlayResultModel>> getDoorwayResults(String doorwayId) async {
-    try {
-      final query = await _firestore
-          .collection(AppConstants.playResultsCollection)
-          .where('doorwayId', isEqualTo: doorwayId)
-          .orderBy('playedAt', descending: true)
-          .limit(100)
-          .get();
+    return _retryableOperation<List<PlayResultModel>>(
+      'getDoorwayResults:$doorwayId',
+      () async {
+        final query = await _firestore
+            .collection(AppConstants.playResultsCollection)
+            .where('doorwayId', isEqualTo: doorwayId)
+            .orderBy('playedAt', descending: true)
+            .limit(100)
+            .get();
 
-      return query.docs
-          .map((doc) => PlayResultModel.fromJson(doc.data()))
-          .toList();
-    } catch (e) {
-      print('Error getting doorway results: $e');
-      rethrow;
-    }
+        return query.docs
+            .map((doc) => PlayResultModel.fromJson(doc.data()))
+            .toList();
+      },
+    );
   }
 
-  /// Get user's play results
+  /// Get user's play results (with automatic retry)
   Future<List<PlayResultModel>> getUserResults(String uid) async {
-    try {
-      final query = await _firestore
-          .collection(AppConstants.playResultsCollection)
-          .where('uid', isEqualTo: uid)
-          .orderBy('playedAt', descending: true)
-          .limit(50)
-          .get();
+    return _retryableOperation<List<PlayResultModel>>(
+      'getUserResults:$uid',
+      () async {
+        final query = await _firestore
+            .collection(AppConstants.playResultsCollection)
+            .where('uid', isEqualTo: uid)
+            .orderBy('playedAt', descending: true)
+            .limit(50)
+            .get();
 
-      return query.docs
-          .map((doc) => PlayResultModel.fromJson(doc.data()))
-          .toList();
-    } catch (e) {
-      print('Error getting user results: $e');
-      rethrow;
-    }
+        return query.docs
+            .map((doc) => PlayResultModel.fromJson(doc.data()))
+            .toList();
+      },
+    );
   }
 
   // Ranking operations
 
-  /// Get ranking for a doorway
+  /// Get ranking for a doorway (with automatic retry)
   Future<RankingModel?> getDoorwayRanking(String doorwayId) async {
-    try {
-      final doc = await _firestore
-          .collection(AppConstants.rankingsCollection)
-          .doc(doorwayId)
-          .get();
+    return _retryableOperation<RankingModel?>(
+      'getDoorwayRanking:$doorwayId',
+      () async {
+        final doc = await _firestore
+            .collection(AppConstants.rankingsCollection)
+            .doc(doorwayId)
+            .get();
 
-      if (doc.exists) {
-        return RankingModel.fromJson(doc.data() as Map<String, dynamic>);
-      }
-      return null;
-    } catch (e) {
-      print('Error getting ranking: $e');
-      rethrow;
-    }
+        if (doc.exists) {
+          return RankingModel.fromJson(doc.data() as Map<String, dynamic>);
+        }
+        return null;
+      },
+    );
   }
 
   /// Update ranking for a doorway
@@ -210,19 +211,54 @@ class FirestoreRepository {
     String doorwayId,
     List<RankingEntry> entries,
   ) async {
-    try {
-      final ranking = RankingModel(
-        doorwayId: doorwayId,
-        entries: entries,
-      );
+    return _retryableOperation<void>(
+      'updateDoorwayRanking:$doorwayId',
+      () async {
+        final ranking = RankingModel(
+          doorwayId: doorwayId,
+          entries: entries,
+        );
 
-      await _firestore
-          .collection(AppConstants.rankingsCollection)
-          .doc(doorwayId)
-          .set(ranking);
-    } catch (e) {
-      print('Error updating ranking: $e');
-      rethrow;
+        await _firestore
+            .collection(AppConstants.rankingsCollection)
+            .doc(doorwayId)
+            .set(ranking);
+      },
+    );
+  }
+
+  // Helper methods
+
+  /// Execute operation with automatic retry on transient errors
+  Future<T> _retryableOperation<T>(
+    String operationName,
+    Future<T> Function() operation,
+  ) async {
+    const maxRetries = 3;
+    int attempt = 0;
+
+    while (attempt <= maxRetries) {
+      try {
+        return await operation();
+      } catch (e) {
+        final (errorType, userMessage) = NetworkErrorHandler.parseError(e);
+
+        if (!NetworkErrorHandler.isRetryable(errorType) ||
+            attempt >= maxRetries) {
+          print('❌ Operation failed after ${attempt + 1} attempts: $operationName\n'
+              '   Error: $errorType - $userMessage');
+          rethrow;
+        }
+
+        attempt++;
+        final delay = NetworkErrorHandler.getRetryDelay(attempt);
+        print('⚠️  Attempt $attempt failed for $operationName, '
+            'retrying in ${delay}ms...');
+
+        await Future.delayed(Duration(milliseconds: delay));
+      }
     }
+
+    throw Exception('Operation failed: $operationName');
   }
 }
