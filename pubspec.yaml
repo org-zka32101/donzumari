@@ -56,11 +56,15 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-  # Assets (to be populated during development)
-  # assets:
-  #   - assets/parcels/
-  #   - assets/audio/
-  #   - assets/animations/
+  # Assets - Game sprites, sounds, and animations
+  assets:
+    - assets/sprites/parcels/stable/
+    - assets/sprites/parcels/moderate/
+    - assets/sprites/parcels/unstable/
+    - assets/sprites/parcels/rare/
+    - assets/sounds/effects/
+    - assets/sounds/ui/
+    - assets/sounds/music/
 
   # Fonts
   # fonts:
