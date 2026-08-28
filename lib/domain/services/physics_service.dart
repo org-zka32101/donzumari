@@ -1,4 +1,5 @@
 import 'package:flame_forge2d/flame_forge2d.dart';
+import 'dart:math';
 import '../../data/models/parcel_model.dart';
 
 /// Service for physics-related calculations and simulations
@@ -55,7 +56,7 @@ class PhysicsService {
   ) {
     final dx = tapPosition.x - referencePoint.x;
     final dy = tapPosition.y - referencePoint.y;
-    return dy.abs() > 0 ? dx.atan2(dy) : 0;
+    return dy.abs() > 0 ? atan2(dy, dx) : 0;
   }
 
   /// Simulate parcel collision and determine stability
