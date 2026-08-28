@@ -436,14 +436,14 @@ class MatchmakingService {
 
       await _firestore.collection('playerRankings').doc(player1Id).update({
         'mmr': newP1MMR,
-        'tier': newP1Tier.toString(),
+        'tier': newP1Tier.name,
         'lastUpdated': DateTime.now().toIso8601String(),
         if (isRanked) 'seasonPoints': FieldValue.increment(mmrChange1.abs()),
       });
 
       await _firestore.collection('playerRankings').doc(player2Id).update({
         'mmr': newP2MMR,
-        'tier': newP2Tier.toString(),
+        'tier': newP2Tier.name,
         'lastUpdated': DateTime.now().toIso8601String(),
         if (isRanked) 'seasonPoints': FieldValue.increment(mmrChange2.abs()),
       });
@@ -453,6 +453,12 @@ class MatchmakingService {
       final newWinRate =
           totalMatches > 0 ? (newP1Wins / totalMatches) * 100 : 0.0;
 
+      final newCurrentStreak = _calculateStreak(player1Result, p1Stats?.currentStreak ?? 0);
+      final previousLongestStreak = p1Stats?.longestWinStreak ?? 0;
+      final newLongestStreak = newCurrentStreak > previousLongestStreak
+          ? newCurrentStreak
+          : previousLongestStreak;
+
       await _firestore.collection('playerStats').doc(player1Id).set(
         PlayerStats(
           userId: player1Id,
@@ -461,8 +467,8 @@ class MatchmakingService {
           losses: newP1Losses,
           draws: newP1Draws,
           winRate: newWinRate,
-          currentStreak: _calculateStreak(player1Result, p1Stats?.currentStreak ?? 0),
-          longestWinStreak: p1Stats?.longestWinStreak ?? 0,
+          currentStreak: newCurrentStreak,
+          longestWinStreak: newLongestStreak,
           averageTowerHeight: ((p1Stats?.averageTowerHeight ?? 0) * (totalMatches - 1) +
                   p1Height) /
               totalMatches,

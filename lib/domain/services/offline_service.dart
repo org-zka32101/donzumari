@@ -173,8 +173,9 @@ class OfflineService {
     _ensureInitialized();
 
     try {
+      final cacheId = '${dataType}_$entityId';
       final entry = OfflineCacheEntry(
-        cacheId: '${dataType}_$entityId',
+        cacheId: cacheId,
         dataType: dataType,
         entityId: entityId,
         data: data,
@@ -183,8 +184,9 @@ class OfflineService {
         expiresAt: DateTime.now().add(Duration(minutes: _cacheExpiryMinutes)),
       );
 
+      final cacheKeyForId = '${_cacheKey}_$cacheId';
       final cacheJson = jsonEncode(entry.toJson());
-      await _prefs.setString(_cacheKey, cacheJson);
+      await _prefs.setString(cacheKeyForId, cacheJson);
 
       print('💾 Data cached: ${entry.cacheId}');
       return true;
@@ -197,20 +199,21 @@ class OfflineService {
   /// Retrieve cached data
   static OfflineCacheEntry? getCachedData(String cacheId) {
     _ensureInitialized();
-
     try {
-      final cacheJson = _prefs.getString(_cacheKey);
-      if (cacheJson == null) return null;
+      final cacheKeyForId = '${_cacheKey}_$cacheId';
+      final cachedJson = _prefs.getString(cacheKeyForId);
+      if (cachedJson == null) return null;
 
-      final data = jsonDecode(cacheJson);
-      final entry = OfflineCacheEntry.fromJson(data);
+      final entry = OfflineCacheEntry.fromJson(jsonDecode(cachedJson) as Map<String, dynamic>);
 
-      // Check if cache is expired
-      if (DateTime.now().isAfter(entry.expiresAt)) {
-        print('⏰ Cache expired: $cacheId');
+      // Check if cache has expired
+      if (entry.expiresAt.isBefore(DateTime.now())) {
+        _prefs.remove(cacheKeyForId);
+        print('🗑️ Cache expired: $cacheId');
         return null;
       }
 
+      print('📂 Cache retrieved: $cacheId');
       return entry;
     } catch (e) {
       print('⚠️ Failed to retrieve cached data: $e');
@@ -218,12 +221,28 @@ class OfflineService {
     }
   }
 
+  /// Get debug info
+  static String getDebugInfo() {
+    _ensureInitialized();
+    return 'Offline: initialized=$_initialized, '
+        'offline=${_isOfflineMode}, '
+        'networkStatus=$_networkStatus';
+  }
+
+  // Private helpers
+
   /// Clear all cache
   static Future<bool> clearCache() async {
     _ensureInitialized();
 
     try {
-      await _prefs.remove(_cacheKey);
+      final allKeys = _prefs.getKeys();
+      final cacheKeys = allKeys.where((key) => key.startsWith(_cacheKey)).toList();
+
+      for (final key in cacheKeys) {
+        await _prefs.remove(key);
+      }
+
       print('🗑️ Cache cleared');
       return true;
     } catch (e) {
