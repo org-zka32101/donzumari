@@ -221,14 +221,6 @@ class OfflineService {
     }
   }
 
-  /// Get debug info
-  static String getDebugInfo() {
-    _ensureInitialized();
-    return 'Offline: initialized=$_initialized, '
-        'offline=${_isOfflineMode}, '
-        'networkStatus=$_networkStatus';
-  }
-
   // Private helpers
 
   /// Clear all cache

@@ -16,7 +16,8 @@ class SpriteService {
       // Preload stable parcel sprites for immediate game start
       final stableDefinitions = SpriteDefinitions.getByStability('stable');
       for (final def in stableDefinitions) {
-        await _loadSpriteVariation(def);
+        final variation = await _loadSpriteVariation(def);
+        _spriteCache['${def.parcelId}:0'] = variation;
       }
 
       _isInitialized = true;

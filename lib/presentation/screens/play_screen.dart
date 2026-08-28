@@ -39,7 +39,7 @@ class _PlayScreenState extends ConsumerState<PlayScreen> {
 
     // Add a simple parcel at the center
     _gameInstance.addParcel(
-      _gameInstance.doorwayX.toDouble(),
+      Vector2(_gameInstance.doorwayX.toDouble(), 50),
       const Vector2(20, 20),
       0,
     );

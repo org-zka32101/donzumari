@@ -53,7 +53,7 @@ class FirestoreRepository {
         await _firestore
             .collection(AppConstants.doorwaysCollection)
             .doc(doorwayId)
-            .set(doorway);
+            .set(doorway.toJson());
 
         return doorway;
       },
@@ -73,7 +73,7 @@ class FirestoreRepository {
             .collection(AppConstants.doorwaysCollection)
             .doc(doorwayId)
             .update({
-          'currentStack': stack.map((p) => p).toList(),
+          'currentStack': stack.map((p) => p.toJson()).toList(),
           'lastVisitedBy': lastVisitedBy,
           AppConstants.lastActivityAtField: DateTime.now(),
         });
@@ -141,7 +141,7 @@ class FirestoreRepository {
         await _firestore
             .collection(AppConstants.playResultsCollection)
             .doc(resultId)
-            .set(result);
+            .set(result.toJson());
 
         return result;
       },
@@ -222,7 +222,7 @@ class FirestoreRepository {
         await _firestore
             .collection(AppConstants.rankingsCollection)
             .doc(doorwayId)
-            .set(ranking);
+            .set(ranking.toJson());
       },
     );
   }

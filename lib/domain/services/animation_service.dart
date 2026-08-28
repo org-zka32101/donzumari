@@ -99,10 +99,10 @@ class AnimationService {
     double progress,
   ) {
     // Accelerate outward based on progress
-    final distance = distance * progress * progress; // Quadratic acceleration
+    final scaledDistance = distance * progress * progress; // Quadratic acceleration
     return (
-      distance * angle.cos(),
-      distance * angle.sin(),
+      scaledDistance * angle.cos(),
+      scaledDistance * angle.sin(),
     );
   }
 
