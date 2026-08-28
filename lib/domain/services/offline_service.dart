@@ -104,6 +104,7 @@ class OfflineService {
 
     try {
       final operations = _getPendingOperations();
+      final updatedOperations = <PendingOperation>[];
       int successCount = 0;
       int failCount = 0;
       final now = DateTime.now();
@@ -114,34 +115,38 @@ class OfflineService {
 
           if (success) {
             successCount++;
-            operation = operation.copyWith(
+            updatedOperations.add(operation.copyWith(
               status: SyncStatus.synced,
               lastSyncAttempt: now,
               syncAttempts: operation.syncAttempts + 1,
-            );
+            ));
           } else {
             failCount++;
-            operation = operation.copyWith(
+            updatedOperations.add(operation.copyWith(
               status: SyncStatus.failed,
               lastSyncAttempt: now,
               syncAttempts: operation.syncAttempts + 1,
               errorMessage: 'Sync failed',
-            );
+            ));
           }
+        } else {
+          updatedOperations.add(operation);
         }
       }
 
       // Save updated operations
-      await _savePendingOperations(operations);
+      await _savePendingOperations(updatedOperations);
 
       final stats = SyncQueueStats(
-        totalPending: operations.where((op) => op.status == SyncStatus.pending).length,
+        totalPending: updatedOperations.where((op) => op.status == SyncStatus.pending).length,
         totalSyncing: 0,
-        totalFailed: operations.where((op) => op.status == SyncStatus.failed).length,
+        totalFailed: updatedOperations.where((op) => op.status == SyncStatus.failed).length,
         successfulSyncs: successCount,
         lastSyncTime: now,
         successRate:
-            (successCount / (successCount + failCount) * 100).clamp(0.0, 100.0),
+            (successCount + failCount) > 0
+                ? (successCount / (successCount + failCount) * 100).clamp(0.0, 100.0)
+                : 0.0,
       );
 
       print('🔄 Sync complete: $successCount synced, $failCount failed');
