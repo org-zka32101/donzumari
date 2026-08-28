@@ -95,7 +95,7 @@ class ParcelService {
       await _firestore
           .collection(_parcelsCollection)
           .doc(parcelId)
-          .set(parcel);
+          .set(parcel.toJson());
 
       return parcel;
     } catch (e) {
