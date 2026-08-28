@@ -199,7 +199,7 @@ class AchievementService {
       await userAchievementsDoc.update({
         'unlockedAchievementIds': FieldValue.arrayUnion([achievementId]),
         'totalPoints': FieldValue.increment(achievement.points),
-        'pointsByCategory.${achievement.category.toString()}':
+        'pointsByCategory.${achievement.category.name}':
             FieldValue.increment(achievement.points),
         'lastUpdated': now,
       });
