@@ -25,7 +25,7 @@ class FirestoreSeeder {
 
       for (final preset in ParcelPresets.presets) {
         final model = ParcelPresets.presetToModel(preset);
-        await parcelsRef.doc(model.parcelId).set(model);
+        await parcelsRef.doc(model.parcelId).set(model.toJson());
       }
 
       print('✅ Parcel presets seeded successfully!');
@@ -67,7 +67,7 @@ class FirestoreSeeder {
           'currentStack': [],
           'topScore': 150.0 + (npcDoorwayIds.indexOf(doorwayId) * 50),
           'lastVisitedBy': null,
-          AppConstants.lastActivityAtField: DateTime.now(),
+          AppConstants.lastActivityAtField: DateTime.now().millisecondsSinceEpoch,
         });
       }
 

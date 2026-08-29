@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import '../../data/models/notification_model.dart';
 
@@ -5,6 +6,7 @@ import '../../data/models/notification_model.dart';
 class NotificationService {
   static final FirebaseMessaging _messaging = FirebaseMessaging.instance;
   static bool _initialized = false;
+  static StreamSubscription<RemoteMessage>? _messageSubscription;
 
   /// Initialize notification service
   static Future<void> initialize() async {
@@ -32,8 +34,8 @@ class NotificationService {
       final token = await _messaging.getToken();
       print('🔔 FCM Token: ${token?.substring(0, 20)}...');
 
-      // Handle foreground messages
-      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      // Handle foreground messages - store subscription to prevent memory leak
+      _messageSubscription = FirebaseMessaging.onMessage.listen((RemoteMessage message) {
         print('🔔 Foreground notification: ${message.notification?.title}');
       });
 
@@ -133,6 +135,12 @@ class NotificationService {
         'NotificationService not initialized. Call initialize() first.',
       );
     }
+  }
+
+  /// Dispose notification service and clean up subscriptions
+  static void dispose() {
+    _messageSubscription?.cancel();
+    print('🔔 Notification service disposed');
   }
 }
 
