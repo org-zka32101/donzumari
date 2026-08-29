@@ -278,7 +278,10 @@ class DonzumariGame extends Forge2DGame {
     _frameCount = 0;
     _gameStopwatch.reset();
     _gameStopwatch.start();
-    world.bodies.clear();
+    // Properly dispose Forge2D bodies to prevent memory leak
+    for (final body in world.bodies) {
+      world.destroyBody(body);
+    }
     _addGround();
 
     print('🔄 Game reset - ready for next round');

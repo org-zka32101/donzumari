@@ -61,6 +61,8 @@ class PerformanceService {
 
     for (final operation in _frameTimes.keys) {
       final times = _frameTimes[operation]!;
+      if (times.isEmpty) continue; // Skip empty collections to prevent crash
+
       final avgTime = times.reduce((a, b) => a + b) / times.length;
       final maxTime = times.reduce((a, b) => a > b ? a : b);
       final minTime = times.reduce((a, b) => a < b ? a : b);
