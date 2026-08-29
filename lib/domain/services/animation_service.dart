@@ -60,7 +60,7 @@ class AnimationService {
   /// Calculate scale animation for pulse effect
   static double getScaleValue(double progress, {double minScale = 0.9, double maxScale = 1.1}) {
     // Sine wave oscillation
-    final oscillation = (progress * 2 * 3.14159).sin() * 0.1;
+    final oscillation = (progress * 2 * math.pi).sin() * 0.1;
     return 1.0 + oscillation;
   }
 
@@ -112,7 +112,7 @@ class AnimationService {
   /// Get tower sway animation for idle state
   static double getTowerSway(double progress, {double amplitude = 5}) {
     // Gentle sine wave sway
-    return amplitude * ((progress * 2 * 3.14159).sin());
+    return amplitude * ((progress * 2 * math.pi).sin());
   }
 
   /// Calculate collapse animation intensity

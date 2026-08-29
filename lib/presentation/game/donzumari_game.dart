@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flame/game.dart';
 import 'package:flame/events.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
@@ -132,7 +133,7 @@ class DonzumariGame extends Forge2DGame {
     final config = ParticleService.getConfig(effectType);
 
     for (int i = 0; i < config.count; i++) {
-      final angle = (360 / config.count) * i * (3.14159 / 180);
+      final angle = (360 / config.count) * i * (math.pi / 180);
       final (vx, vy) = ParticleService.getVelocityComponents(
         config.velocity,
         angle,
