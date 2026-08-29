@@ -51,7 +51,7 @@ class AuthService {
         await _firestore
             .collection(AppConstants.usersCollection)
             .doc(uid)
-            .set(newUser);
+            .set(newUser.toJson());
 
         return newUser;
       }

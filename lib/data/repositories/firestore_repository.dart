@@ -75,7 +75,7 @@ class FirestoreRepository {
             .update({
           'currentStack': stack.map((p) => p.toJson()).toList(),
           'lastVisitedBy': lastVisitedBy,
-          AppConstants.lastActivityAtField: DateTime.now(),
+          AppConstants.lastActivityAtField: DateTime.now().millisecondsSinceEpoch,
         });
       },
     );

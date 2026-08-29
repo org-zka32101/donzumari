@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:math' as math;
 
 /// Service for handling network errors and providing user-friendly messages
 class NetworkErrorHandler {
@@ -199,10 +200,6 @@ class RetryConfig {
 
 extension Pow on double {
   double pow(int exponent) {
-    double result = 1.0;
-    for (int i = 0; i < exponent; i++) {
-      result *= this;
-    }
-    return result;
+    return math.pow(this, exponent).toDouble();
   }
 }

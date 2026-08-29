@@ -478,6 +478,7 @@ class MatchmakingService {
           createdAt: p1Stats?.createdAt ?? DateTime.now(),
           updatedAt: DateTime.now(),
         ).toJson(),
+        SetOptions(merge: true),
       );
 
       return true;

@@ -217,11 +217,16 @@ class DebouncedFunction<T> {
 
   Future<T> call() async {
     _timer?.cancel();
-    return await Future<T>((resolve) {
-      _timer = Timer(debounceDuration, () async {
-        resolve(function());
-      });
+    final completer = Completer<T>();
+    _timer = Timer(debounceDuration, () async {
+      try {
+        final result = await function();
+        completer.complete(result);
+      } catch (e) {
+        completer.completeError(e);
+      }
     });
+    return completer.future;
   }
 
   void dispose() {

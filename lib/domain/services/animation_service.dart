@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 /// Service for managing game animations and transitions
 class AnimationService {
   // Animation durations (milliseconds)
@@ -49,9 +51,10 @@ class AnimationService {
     return eased * 100;
   }
 
-  /// Calculate rotate animation (for spinning effect)
+  /// Calculate rotate animation (for spinning effect, returns radians)
   static double getRotationAngle(double progress) {
-    return progress * 360 * (3.14159 / 180); // Full rotation
+    // Full rotation: progress (0-1) * 360 degrees * (pi/180) to convert to radians
+    return progress * 360 * (math.pi / 180);
   }
 
   /// Calculate scale animation for pulse effect
