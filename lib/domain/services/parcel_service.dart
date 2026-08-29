@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:math' as math;
 import '../../core/constants/app_constants.dart';
 import '../../data/models/parcel_model.dart';
+import 'difficulty_service.dart';
 import 'package:uuid/uuid.dart';
 
 /// Service for managing parcel data and presets
@@ -121,10 +123,16 @@ class ParcelService {
     }
   }
 
-  /// Get next parcel for game progression
-  /// Returns stable parcels early, gradually introducing unstable ones
-  Future<ParcelModel?> getNextGameParcel(int parcelCount) async {
+  /// Get next parcel for game progression based on stage difficulty
+  /// Respects stage configuration for balanced difficulty curve
+  Future<ParcelModel?> getNextGameParcel(int parcelCount, {int? stageNumber}) async {
     try {
+      // If stage number provided, use stage-aware selection
+      if (stageNumber != null && DifficultyService.isValidStage(stageNumber)) {
+        return await _getStageParcel(stageNumber, parcelCount);
+      }
+
+      // Fallback to legacy progression system
       StabilityTier tier;
 
       if (parcelCount == 0) {
@@ -155,6 +163,39 @@ class ParcelService {
       return await getRandomParcelByStability(tier);
     } catch (e) {
       print('Error getting next game parcel: $e');
+      rethrow;
+    }
+  }
+
+  /// Get parcel for specific stage - respects stage difficulty configuration
+  Future<ParcelModel?> _getStageParcel(int stageNumber, int parcelCount) async {
+    try {
+      final stageConfig = DifficultyService.getStageConfig(stageNumber);
+      if (stageConfig == null) return await getRandomParcelByStability(StabilityTier.stable);
+
+      // Determine if this parcel should be stable based on stage proportion
+      final random = math.Random();
+      final shouldBeStable = random.nextDouble() < stageConfig.parcelCountStable;
+
+      StabilityTier selectedTier;
+      if (shouldBeStable && stageConfig.allowedStability.contains(StabilityTier.stable)) {
+        selectedTier = StabilityTier.stable;
+      } else {
+        // Pick from remaining allowed stability tiers
+        final availableTiers = stageConfig.allowedStability
+            .where((t) => t != StabilityTier.stable || !shouldBeStable)
+            .toList();
+
+        if (availableTiers.isEmpty) {
+          selectedTier = stageConfig.allowedStability.first;
+        } else {
+          selectedTier = availableTiers[random.nextInt(availableTiers.length)];
+        }
+      }
+
+      return await getRandomParcelByStability(selectedTier);
+    } catch (e) {
+      print('Error getting stage parcel: $e');
       rethrow;
     }
   }
