@@ -177,19 +177,23 @@ class ParcelService {
       final random = math.Random();
       final shouldBeStable = random.nextDouble() < stageConfig.parcelCountStable;
 
+      // Select stability tier based on stage configuration
       StabilityTier selectedTier;
+
+      // If we want stable and it's allowed, pick stable
       if (shouldBeStable && stageConfig.allowedStability.contains(StabilityTier.stable)) {
         selectedTier = StabilityTier.stable;
       } else {
-        // Pick from remaining allowed stability tiers
-        final availableTiers = stageConfig.allowedStability
-            .where((t) => t != StabilityTier.stable || !shouldBeStable)
+        // Pick from non-stable parcels, or any available if none allowed
+        final nonStableTiers = stageConfig.allowedStability
+            .where((t) => t != StabilityTier.stable)
             .toList();
 
-        if (availableTiers.isEmpty) {
-          selectedTier = stageConfig.allowedStability.first;
+        if (nonStableTiers.isNotEmpty) {
+          selectedTier = nonStableTiers[random.nextInt(nonStableTiers.length)];
         } else {
-          selectedTier = availableTiers[random.nextInt(availableTiers.length)];
+          // Fallback if only stable is available (shouldn't happen in normal stages)
+          selectedTier = stageConfig.allowedStability.first;
         }
       }
 
