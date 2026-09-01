@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 /// Service for managing particle effects during gameplay
 class ParticleService {
   // Particle types
@@ -148,7 +150,7 @@ class ParticleService {
     bool shouldRotate,
   ) {
     if (!shouldRotate) return 0;
-    return (elapsedMs / 10.0) * (3.14159 / 180); // Rotate over time
+    return (elapsedMs / 10.0) * (math.pi / 180); // Rotate over time
   }
 
   /// Generate random velocity components for spread
@@ -160,7 +162,7 @@ class ParticleService {
     int totalCount,
   ) {
     // Distribute particles evenly across spread angle
-    final spreadRadians = spreadDegrees * (3.14159 / 180);
+    final spreadRadians = spreadDegrees * (math.pi / 180);
     final particleAngle = angle + (spreadRadians * (index / (totalCount - 1))) - (spreadRadians / 2);
 
     return (

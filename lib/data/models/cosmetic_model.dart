@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'cosmetic_model.freezed.dart';
+part 'cosmetic_model.g.dart';
 
 /// Cosmetic type (skin, effect, etc.)
 enum CosmeticType {

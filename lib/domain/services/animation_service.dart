@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 /// Service for managing game animations and transitions
 class AnimationService {
   // Animation durations (milliseconds)
@@ -49,15 +51,16 @@ class AnimationService {
     return eased * 100;
   }
 
-  /// Calculate rotate animation (for spinning effect)
+  /// Calculate rotate animation (for spinning effect, returns radians)
   static double getRotationAngle(double progress) {
-    return progress * 360 * (3.14159 / 180); // Full rotation
+    // Full rotation: progress (0-1) * 360 degrees * (pi/180) to convert to radians
+    return progress * 360 * (math.pi / 180);
   }
 
   /// Calculate scale animation for pulse effect
   static double getScaleValue(double progress, {double minScale = 0.9, double maxScale = 1.1}) {
     // Sine wave oscillation
-    final oscillation = (progress * 2 * 3.14159).sin() * 0.1;
+    final oscillation = (progress * 2 * math.pi).sin() * 0.1;
     return 1.0 + oscillation;
   }
 
@@ -109,7 +112,7 @@ class AnimationService {
   /// Get tower sway animation for idle state
   static double getTowerSway(double progress, {double amplitude = 5}) {
     // Gentle sine wave sway
-    return amplitude * ((progress * 2 * 3.14159).sin());
+    return amplitude * ((progress * 2 * math.pi).sin());
   }
 
   /// Calculate collapse animation intensity

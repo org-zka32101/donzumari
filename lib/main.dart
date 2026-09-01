@@ -14,6 +14,7 @@ import 'domain/services/matchmaking_service.dart';
 import 'domain/services/offline_service.dart';
 import 'domain/services/tutorial_service.dart';
 import 'domain/services/notification_service.dart';
+import 'data/services/firestore_seeder.dart';
 import 'domain/providers/preferences_providers.dart';
 import 'presentation/screens/splash_screen.dart';
 import 'presentation/screens/home_screen.dart';
@@ -49,6 +50,7 @@ void main() async {
 Future<void> _initializeFirestore() async {
   try {
     final firestore = FirebaseFirestore.instance;
+    final seeder = FirestoreSeeder(firestore: firestore);
 
     // Only seed on first app launch (check if parcels exist)
     final parcelsRef = firestore.collection('parcelPresets');
@@ -56,11 +58,13 @@ Future<void> _initializeFirestore() async {
 
     if (snapshot.docs.isEmpty) {
       print('🌱 First launch detected. Seeding initial data...');
-      // TODO: Implement seeding here
-      // For now, parcels should be created via Firebase Console or admin SDK
+      await seeder.seedAll();
+      print('✅ Firestore seeding completed successfully');
+    } else {
+      print('✅ Firestore data already seeded');
     }
   } catch (e) {
-    print('ℹ️ Firestore initialization note: $e');
+    print('⚠️ Firestore initialization warning: $e');
     // Don't block app startup if seeding fails
   }
 }

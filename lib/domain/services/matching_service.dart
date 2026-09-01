@@ -196,7 +196,7 @@ class MatchingService {
           .doc(doorwayId)
           .update({
         'lastVisitedBy': visitorUid,
-        'lastActivityAt': DateTime.now(),
+        'lastActivityAt': DateTime.now().millisecondsSinceEpoch,
       });
     } catch (e) {
       print('Error recording doorway visit: $e');

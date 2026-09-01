@@ -61,6 +61,8 @@ class PerformanceService {
 
     for (final operation in _frameTimes.keys) {
       final times = _frameTimes[operation]!;
+      if (times.isEmpty) continue; // Skip empty collections to prevent crash
+
       final avgTime = times.reduce((a, b) => a + b) / times.length;
       final maxTime = times.reduce((a, b) => a > b ? a : b);
       final minTime = times.reduce((a, b) => a < b ? a : b);
@@ -217,11 +219,16 @@ class DebouncedFunction<T> {
 
   Future<T> call() async {
     _timer?.cancel();
-    return await Future<T>((resolve) {
-      _timer = Timer(debounceDuration, () async {
-        resolve(function());
-      });
+    final completer = Completer<T>();
+    _timer = Timer(debounceDuration, () async {
+      try {
+        final result = await function();
+        completer.complete(result);
+      } catch (e) {
+        completer.completeError(e);
+      }
     });
+    return completer.future;
   }
 
   void dispose() {

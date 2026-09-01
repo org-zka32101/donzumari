@@ -145,10 +145,10 @@ class AudioService {
   }
 
   /// Enable/disable background music
-  static void setMusicEnabled(bool enabled) {
+  static Future<void> setMusicEnabled(bool enabled) async {
     _musicEnabled = enabled;
     if (!enabled) {
-      stopMusic();
+      await stopMusic();
     }
   }
 

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:uuid/uuid.dart';
 import '../../data/models/achievement_model.dart';
 
 /// Service for managing achievements
@@ -170,7 +171,7 @@ class AchievementService {
           'achievementId': achievementId,
           'isUnlocked': false,
           'progress': progressIncrement,
-          'progressTarget': 100, // Default target
+          'progressTarget': achievement.progressTarget, // Use achievement definition target, not hardcoded 100
           'unlockedAt': null,
           'createdAt': now,
           'updatedAt': now,
@@ -204,11 +205,13 @@ class AchievementService {
         'lastUpdated': now,
       });
 
-      // Record unlock event
+      // Record unlock event with UUID to prevent collisions
+      final unlockId = const Uuid().v4();
       await _firestore
           .collection('achievementUnlocks')
-          .doc('${userId}_${DateTime.now().millisecondsSinceEpoch}')
+          .doc(unlockId)
           .set({
+        'unlockId': unlockId,
         'achievementId': achievementId,
         'userId': userId,
         'unlockedAt': now,
